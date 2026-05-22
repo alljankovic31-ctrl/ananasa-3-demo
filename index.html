@@ -10,9 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260522-map-1" />
-    <link rel="stylesheet" href="./layout.css?v=20260522-map-1" />
-    <script src="./app.js?v=20260522-map-1" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=20260522-map-2" />
+    <link rel="stylesheet" href="./layout.css?v=20260522-map-2" />
+    <script src="./app.js?v=20260522-map-2" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -163,10 +163,16 @@
               <button class="floor-tab active" type="button" role="tab" aria-selected="true" data-floor="sank">Sank</button>
               <button class="floor-tab" type="button" role="tab" aria-selected="false" data-floor="sprat">Sprat</button>
             </div>
+            <div class="map-controls" aria-label="Kontrole mape">
+              <button type="button" data-map-action="zoom-in" aria-label="Uvecaj mapu">+</button>
+              <button type="button" data-map-action="zoom-out" aria-label="Umanji mapu">-</button>
+              <button type="button" data-map-action="reset">Reset</button>
+            </div>
+            <p class="map-guide">Povuci mapu i uvecaj je na telefonu.</p>
             <div class="venue-plan floor-sank active" data-floor-plan="sank">
               <div class="plan-label bar-counter">Sank</div>
               <div class="plan-hint bar-hint">Barske stolice 1-10</div>
-              <div class="plan-hint lower-hint">Donji deo 11-14</div>
+              <div class="plan-hint lower-hint">Barske stolice 11-14</div>
               <div class="plan-label entry-door">Ulaz</div>
               <div class="plan-label stairs">Stepenice</div>
               <div class="plan-booth booth-left">DJ</div>
