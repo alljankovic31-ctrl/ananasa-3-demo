@@ -296,6 +296,7 @@ function applyMapView(floor = activeFloor()) {
   plan.style.setProperty("--map-x", `${view.x}px`);
   plan.style.setProperty("--map-y", `${view.y}px`);
   plan.style.setProperty("--map-scale", String(view.scale));
+  plan.style.transform = `translate3d(${view.x}px, ${view.y}px, 0) scale(${view.scale})`;
   plan.classList.toggle("zoomed", view.scale > 1.02 || Math.abs(view.x) > 2 || Math.abs(view.y) > 2);
 }
 
