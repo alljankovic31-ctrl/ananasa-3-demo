@@ -271,6 +271,66 @@ h2 {
   z-index: 3;
 }
 
+.map-controls {
+  align-items: center;
+  backdrop-filter: blur(18px);
+  background: rgba(16, 11, 10, 0.78);
+  border: 1px solid rgba(255, 208, 138, 0.22);
+  border-radius: 999px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.26);
+  display: inline-flex;
+  gap: 0.32rem;
+  padding: 0.3rem;
+  position: absolute;
+  right: 1.8rem;
+  top: 1.8rem;
+  z-index: 4;
+}
+
+.map-controls button {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 208, 138, 0.16);
+  border-radius: 999px;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  height: 40px;
+  min-width: 40px;
+  padding: 0 0.8rem;
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.map-controls button:hover,
+.map-controls button:active {
+  background: linear-gradient(135deg, rgba(255, 208, 138, 0.22), rgba(66, 217, 196, 0.14));
+  box-shadow: 0 10px 28px rgba(242, 167, 62, 0.18);
+  transform: translateY(-1px);
+}
+
+.map-guide {
+  backdrop-filter: blur(16px);
+  background: rgba(16, 11, 10, 0.68);
+  border: 1px solid rgba(255, 208, 138, 0.16);
+  border-radius: 999px;
+  bottom: 1.55rem;
+  color: rgba(255, 238, 212, 0.78);
+  font-size: 0.72rem;
+  font-weight: 800;
+  left: 50%;
+  margin: 0;
+  padding: 0.48rem 0.72rem;
+  pointer-events: none;
+  position: absolute;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  z-index: 4;
+}
+
 .floor-tab {
   background: rgba(24, 14, 10, 0.88);
   border: 1px solid var(--line);
@@ -302,10 +362,38 @@ h2 {
   min-height: 728px;
   overflow: hidden;
   position: absolute;
+  touch-action: none;
+  transform: translate3d(var(--map-x, 0), var(--map-y, 0), 0) scale(var(--map-scale, 1));
+  transform-origin: center;
+  transition:
+    box-shadow 260ms ease,
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
 }
 
 .venue-plan.active {
   display: block;
+}
+
+.venue-plan.zoomed {
+  box-shadow:
+    inset 0 0 0 14px rgba(61, 70, 73, 0.6),
+    inset 0 0 0 16px rgba(255, 208, 138, 0.12),
+    0 26px 90px rgba(0, 0, 0, 0.38);
+}
+
+.venue-plan .table-map::before {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 92, 150, 0.16), transparent 25%),
+    radial-gradient(circle at 82% 18%, rgba(66, 217, 196, 0.13), transparent 24%),
+    radial-gradient(circle at 48% 92%, rgba(242, 167, 62, 0.12), transparent 25%);
+  content: "";
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0.76;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
 }
 
 .floor-sank::before {
@@ -441,7 +529,25 @@ h2 {
     0 9px 20px rgba(0, 0, 0, 0.26),
     inset 0 0 0 2px rgba(255, 255, 255, 0.14);
   height: clamp(54px, 5vw, 72px);
+  isolation: isolate;
   width: clamp(54px, 5vw, 72px);
+  will-change: transform, filter;
+}
+
+.venue-plan .table.available {
+  animation: available-table-glow 2.8s ease-in-out infinite;
+}
+
+.venue-plan .table::after {
+  background: radial-gradient(circle, rgba(198, 255, 208, 0.42), transparent 68%);
+  content: "";
+  filter: blur(8px);
+  inset: -15px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 220ms ease;
+  z-index: -1;
 }
 
 .venue-plan .table.bar-seat {
@@ -467,14 +573,119 @@ h2 {
 .venue-plan .table strong {
   color: #052512;
   font-family: var(--body);
-  font-size: 1.15rem;
+  font-size: clamp(1.08rem, 1.4vw, 1.32rem);
   font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .venue-plan .table span {
   color: #0b4421;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 800;
+  line-height: 1.05;
+}
+
+.venue-plan .table:hover,
+.venue-plan .table:focus-visible,
+.venue-plan .table.selected {
+  filter: saturate(1.15) brightness(1.04);
+  transform: translateY(-4px) scale(1.06);
+}
+
+.venue-plan .table:hover::after,
+.venue-plan .table:focus-visible::after,
+.venue-plan .table.selected::after {
+  opacity: 1;
+}
+
+.venue-plan .table:active {
+  transform: translateY(-1px) scale(0.97);
+}
+
+.venue-plan .table.selected {
+  box-shadow:
+    0 0 0 4px rgba(255, 208, 138, 0.22),
+    0 0 34px rgba(67, 223, 108, 0.34),
+    0 18px 38px rgba(0, 0, 0, 0.34);
+}
+
+.venue-plan .table.vip {
+  animation: vip-table-glow 2.6s ease-in-out infinite;
+  background:
+    linear-gradient(135deg, rgba(255, 246, 193, 0.34), transparent),
+    #f2a73e;
+  border-color: rgba(255, 231, 176, 0.92);
+}
+
+.venue-plan .table.vip::after {
+  background:
+    radial-gradient(circle, rgba(255, 219, 128, 0.6), transparent 54%),
+    radial-gradient(circle, rgba(255, 92, 150, 0.3), transparent 72%);
+  opacity: 0.62;
+}
+
+.venue-plan .table.reserved,
+.venue-plan .table.busy {
+  animation: none;
+  background:
+    linear-gradient(135deg, rgba(255, 188, 188, 0.12), transparent),
+    rgba(91, 48, 50, 0.92);
+  border-color: rgba(240, 114, 114, 0.62);
+  box-shadow:
+    0 9px 20px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+  cursor: not-allowed;
+  filter: grayscale(0.18);
+  opacity: 0.8;
+}
+
+.venue-plan .table.reserved strong,
+.venue-plan .table.busy strong,
+.venue-plan .table.reserved span,
+.venue-plan .table.busy span {
+  color: #f5cccc;
+}
+
+.venue-plan .table.reserved:hover,
+.venue-plan .table.busy:hover {
+  filter: grayscale(0.18);
+  transform: none;
+}
+
+@keyframes available-table-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 9px 20px rgba(0, 0, 0, 0.26),
+      0 0 0 rgba(67, 223, 108, 0),
+      inset 0 0 0 2px rgba(255, 255, 255, 0.14);
+  }
+
+  50% {
+    box-shadow:
+      0 11px 28px rgba(0, 0, 0, 0.32),
+      0 0 24px rgba(67, 223, 108, 0.34),
+      inset 0 0 0 2px rgba(255, 255, 255, 0.18);
+  }
+}
+
+@keyframes vip-table-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 10px 26px rgba(0, 0, 0, 0.32),
+      0 0 22px rgba(242, 167, 62, 0.28),
+      inset 0 0 0 2px rgba(255, 255, 255, 0.16);
+  }
+
+  50% {
+    box-shadow:
+      0 14px 34px rgba(0, 0, 0, 0.36),
+      0 0 34px rgba(242, 167, 62, 0.48),
+      0 0 54px rgba(255, 92, 150, 0.16),
+      inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+  }
 }
 
 .gallery-button::before {
@@ -488,6 +699,55 @@ h2 {
   right: 0.9rem;
   text-align: left;
   z-index: 1;
+}
+
+dialog[open] {
+  animation: booking-modal-in 320ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  box-shadow:
+    0 30px 120px rgba(0, 0, 0, 0.68),
+    0 0 0 1px rgba(255, 208, 138, 0.16);
+}
+
+dialog[open]::backdrop {
+  animation: booking-backdrop-in 260ms ease both;
+}
+
+.modal-stack {
+  animation: booking-content-rise 420ms 45ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@keyframes booking-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes booking-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes booking-content-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .floating-reserve {
@@ -642,6 +902,24 @@ h2 {
   .floor-tabs {
     left: 1rem;
     top: 1rem;
+  }
+
+  .map-controls {
+    bottom: 1rem;
+    right: 1rem;
+    top: auto;
+  }
+
+  .map-controls button {
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .map-guide {
+    bottom: 4.7rem;
+    font-size: 0.6rem;
+    left: 1rem;
+    transform: none;
   }
 
   .booth-left,
