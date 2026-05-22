@@ -111,7 +111,6 @@ const reserveSelected = document.querySelector("#reserve-selected");
 const guestForm = document.querySelector("#guest-form");
 const guestEvent = document.querySelector("#guest-event");
 const toast = document.querySelector("#toast");
-const mapControls = document.querySelector(".map-controls");
 
 let events = fallbackEvents;
 let tables = fallbackTables;
@@ -284,10 +283,6 @@ function showFloor(floor) {
 
 function activeFloor() {
   return document.querySelector(".venue-plan.active")?.dataset.floorPlan || "sank";
-}
-
-function activePlan() {
-  return document.querySelector(".venue-plan.active");
 }
 
 function clampMapScale(scale) {
@@ -481,6 +476,14 @@ eventGrid.addEventListener("click", (event) => {
 });
 
 floorStage.addEventListener("click", (event) => {
+  const mapControl = event.target.closest("[data-map-action]");
+  if (mapControl) {
+    if (mapControl.dataset.mapAction === "zoom-in") zoomMap(0.16);
+    if (mapControl.dataset.mapAction === "zoom-out") zoomMap(-0.16);
+    if (mapControl.dataset.mapAction === "reset") resetMapView();
+    return;
+  }
+
   const floorTab = event.target.closest("[data-floor]");
   if (floorTab) {
     showFloor(floorTab.dataset.floor);
@@ -501,14 +504,6 @@ floorStage.addEventListener("click", (event) => {
   if (window.matchMedia("(max-width: 720px)").matches) {
     openReservationForSelected();
   }
-});
-
-mapControls.addEventListener("click", (event) => {
-  const control = event.target.closest("[data-map-action]");
-  if (!control) return;
-  if (control.dataset.mapAction === "zoom-in") zoomMap(0.16);
-  if (control.dataset.mapAction === "zoom-out") zoomMap(-0.16);
-  if (control.dataset.mapAction === "reset") resetMapView();
 });
 
 function pointerDistance(first, second) {
