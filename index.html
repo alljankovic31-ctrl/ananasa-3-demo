@@ -10,9 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260522-ux-1" />
-    <link rel="stylesheet" href="./layout.css?v=20260522-ux-1" />
-    <script src="./app.js?v=20260522-ux-1" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=20260522-map-1" />
+    <link rel="stylesheet" href="./layout.css?v=20260522-map-1" />
+    <script src="./app.js?v=20260522-map-1" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -148,10 +148,11 @@
         <div class="section-head split-head">
           <div>
             <p class="eyebrow">Rezervacije</p>
-            <h2>Izaberi sto</h2>
+            <h2>Izaberi mesto</h2>
           </div>
           <div class="legend" aria-label="Legenda stolova">
             <span><i class="available"></i>Slobodan</span>
+            <span><i class="bar"></i>Barska stolica</span>
             <span><i class="busy"></i>Zauzet</span>
             <span><i class="vip"></i>VIP</span>
           </div>
@@ -164,6 +165,8 @@
             </div>
             <div class="venue-plan floor-sank active" data-floor-plan="sank">
               <div class="plan-label bar-counter">Sank</div>
+              <div class="plan-hint bar-hint">Barske stolice 1-10</div>
+              <div class="plan-hint lower-hint">Donji deo 11-14</div>
               <div class="plan-label entry-door">Ulaz</div>
               <div class="plan-label stairs">Stepenice</div>
               <div class="plan-booth booth-left">DJ</div>
@@ -177,10 +180,10 @@
             </div>
           </div>
           <aside class="booking-panel">
-            <p class="eyebrow">Selected table</p>
-            <h3 id="selected-table-title">Klikni slobodan sto</h3>
+            <p class="eyebrow">Izabrano mesto</p>
+            <h3 id="selected-table-title">Klikni slobodno mesto</h3>
             <p id="selected-table-copy">
-              Izaberi Sank ili Sprat, klikni mesto na mapi i otvori rezervaciju za taj sto.
+              Izaberi Sank ili Sprat. Na telefonu klik odmah otvara rezervaciju za izabrano mesto.
             </p>
             <button id="reserve-selected" class="button primary full" type="button" disabled>Otvori rezervaciju</button>
           </aside>
