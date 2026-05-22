@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="sr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ananasa 3 Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./admin.css" />
+    <script src="./admin.js?v=20260522-admin-1" defer></script>
+  </head>
+  <body class="admin-body">
+    <header class="admin-header">
+      <a class="brand" href="./index.html#home" aria-label="Ananasa 3 pocetna">
+        <img
+          src="https://media.base44.com/images/public/user_69c0e9232d58b2532dbbabdb/99ff3131a_472617629_639547871916582_2148296062729666960_n.jpg"
+          alt=""
+        />
+        <span>Ananasa 3</span>
+      </a>
+      <div class="admin-toolbar">
+        <button id="refresh-admin" class="button secondary" type="button">Osvezi</button>
+        <button id="sign-out" class="button secondary" type="button" hidden>Odjavi se</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <section class="admin-login-band" id="login-band">
+        <div class="admin-login-copy">
+          <p class="eyebrow">Admin</p>
+          <h1>Rezervacije</h1>
+        </div>
+        <form id="admin-login" class="admin-login-form">
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" required placeholder="admin@email.com" />
+          </label>
+          <label>
+            Lozinka
+            <input name="password" type="password" autocomplete="current-password" required placeholder="********" />
+          </label>
+          <button class="button primary" type="submit">Prijavi se</button>
+        </form>
+      </section>
+
+      <section class="admin-dashboard" id="admin-dashboard" hidden>
+        <div class="admin-head">
+          <div>
+            <p class="eyebrow">Pregled</p>
+            <h1>Admin sto</h1>
+          </div>
+          <div class="admin-summary" aria-label="Broj zahteva">
+            <span><strong id="reservation-count">0</strong> Rezervacije</span>
+            <span><strong id="guest-count">0</strong> Guest list</span>
+            <span><strong id="vip-count">0</strong> VIP</span>
+          </div>
+        </div>
+
+        <nav class="admin-tabs" aria-label="Admin kategorije">
+          <button class="admin-tab active" type="button" data-admin-tab="reservations">Rezervacije</button>
+          <button class="admin-tab" type="button" data-admin-tab="guest-list">Guest list</button>
+          <button class="admin-tab" type="button" data-admin-tab="vip">VIP upiti</button>
+        </nav>
+
+        <section class="admin-panel active" data-admin-panel="reservations">
+          <div id="reservation-list" class="request-list"></div>
+        </section>
+        <section class="admin-panel" data-admin-panel="guest-list">
+          <div id="guest-list" class="request-list"></div>
+        </section>
+        <section class="admin-panel" data-admin-panel="vip">
+          <div id="vip-list" class="request-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <div id="admin-toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
