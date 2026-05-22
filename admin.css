@@ -55,6 +55,13 @@
   font-size: clamp(2.8rem, 7vw, 6rem);
 }
 
+.admin-login-note {
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 1rem 0 0;
+  max-width: 380px;
+}
+
 .admin-login-form {
   backdrop-filter: blur(18px);
   background: var(--panel);
@@ -120,6 +127,10 @@
   background: rgba(255, 255, 255, 0.06);
   border-color: var(--line);
   color: var(--text);
+}
+
+.admin-tab.active {
+  box-shadow: inset 0 -2px 0 var(--gold);
 }
 
 .admin-panel {
@@ -277,5 +288,20 @@
   .admin-header .button.secondary {
     min-height: 42px;
     padding-inline: 0.8rem;
+  }
+
+  .admin-main {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .admin-login-band {
+    min-height: calc(100svh - 132px);
+  }
+
+  .admin-login-form .button,
+  .admin-login-form input,
+  .compact-button,
+  .contact-link {
+    min-height: 50px;
   }
 }
