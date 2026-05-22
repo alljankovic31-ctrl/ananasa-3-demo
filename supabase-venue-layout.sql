@@ -4,11 +4,11 @@ create unique index if not exists venue_tables_table_number_idx
 insert into public.venue_tables
   (table_number, zone, capacity, is_vip, map_left, map_top, is_active)
 values
-  ('1', 'Sank', 2, false, '14%', '14%', true), ('2', 'Sank', 2, false, '14%', '23%', true),
-  ('3', 'Sank', 2, false, '14%', '32%', true), ('4', 'Sank', 2, false, '14%', '41%', true),
-  ('5', 'Sank', 2, false, '25%', '48%', true), ('6', 'Sank', 2, false, '34%', '48%', true),
-  ('7', 'Sank', 2, false, '43%', '48%', true), ('8', 'Sank', 2, false, '52%', '48%', true),
-  ('9', 'Sank', 2, false, '61%', '48%', true), ('10', 'Sank', 2, false, '70%', '48%', true),
+  ('1', 'Barska stolica', 1, false, '14%', '14%', true), ('2', 'Barska stolica', 1, false, '14%', '23%', true),
+  ('3', 'Barska stolica', 1, false, '14%', '32%', true), ('4', 'Barska stolica', 1, false, '14%', '41%', true),
+  ('5', 'Barska stolica', 1, false, '25%', '48%', true), ('6', 'Barska stolica', 1, false, '34%', '48%', true),
+  ('7', 'Barska stolica', 1, false, '43%', '48%', true), ('8', 'Barska stolica', 1, false, '52%', '48%', true),
+  ('9', 'Barska stolica', 1, false, '61%', '48%', true), ('10', 'Barska stolica', 1, false, '70%', '48%', true),
   ('11', 'Donji deo', 4, false, '25%', '88%', true), ('12', 'Donji deo', 4, false, '35%', '88%', true),
   ('13', 'Donji deo', 4, false, '45%', '88%', true), ('14', 'Donji deo', 4, false, '55%', '88%', true),
   ('15', 'Sprat', 4, false, '68%', '84%', true), ('16', 'Sprat', 4, false, '42%', '84%', true),
