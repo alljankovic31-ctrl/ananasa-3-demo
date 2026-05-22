@@ -58,6 +58,44 @@ main section[id] {
   opacity: 1;
 }
 
+body:not(:has(main section:target)) [data-nav-link="home"],
+body:has(#home:target) [data-nav-link="home"],
+body:has(#events:target) [data-nav-link="events"],
+body:has(#tables:target) [data-nav-link="tables"],
+body:has(#guestlist:target) [data-nav-link="guestlist"],
+body:has(#vip:target) [data-nav-link="vip"],
+body:has(#gallery:target) [data-nav-link="gallery"] {
+  color: var(--text);
+}
+
+body:has(#home:target) .site-header [data-nav-link="home"]::before,
+body:has(#events:target) .site-header [data-nav-link="events"]::before,
+body:has(#tables:target) .site-header [data-nav-link="tables"]::before,
+body:has(#guestlist:target) .site-header [data-nav-link="guestlist"]::before,
+body:has(#vip:target) .site-header [data-nav-link="vip"]::before,
+body:has(#gallery:target) .site-header [data-nav-link="gallery"]::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+body:has(#home:target) .mobile-dock [data-nav-link="home"],
+body:has(#events:target) .mobile-dock [data-nav-link="events"],
+body:has(#tables:target) .mobile-dock [data-nav-link="tables"],
+body:has(#vip:target) .mobile-dock [data-nav-link="vip"] {
+  background: linear-gradient(135deg, rgba(255, 208, 138, 0.22), rgba(66, 217, 196, 0.1));
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+body:has(#home:target) .mobile-dock [data-nav-link="home"] .dock-icon,
+body:has(#events:target) .mobile-dock [data-nav-link="events"] .dock-icon,
+body:has(#tables:target) .mobile-dock [data-nav-link="tables"] .dock-icon,
+body:has(#vip:target) .mobile-dock [data-nav-link="vip"] .dock-icon {
+  background: linear-gradient(135deg, var(--peach), var(--gold));
+  box-shadow: 0 9px 26px rgba(242, 167, 62, 0.26);
+  color: var(--ink);
+}
+
 .band,
 .signature-band,
 .social-proof {
