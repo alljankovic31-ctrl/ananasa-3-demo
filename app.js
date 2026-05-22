@@ -45,10 +45,10 @@ const fallbackTables = [
   { table_number: "8", floor: "sank", capacity: 1, zone: "Barska stolica", map_left: "52%", map_top: "48%" },
   { table_number: "9", floor: "sank", capacity: 1, zone: "Barska stolica", map_left: "61%", map_top: "48%" },
   { table_number: "10", floor: "sank", capacity: 1, zone: "Barska stolica", map_left: "70%", map_top: "48%" },
-  { table_number: "11", floor: "sank", capacity: 4, zone: "Donji deo", map_left: "25%", map_top: "88%" },
-  { table_number: "12", floor: "sank", capacity: 4, zone: "Donji deo", map_left: "35%", map_top: "88%" },
-  { table_number: "13", floor: "sank", capacity: 4, zone: "Donji deo", map_left: "45%", map_top: "88%" },
-  { table_number: "14", floor: "sank", capacity: 4, zone: "Donji deo", map_left: "55%", map_top: "88%" },
+  { table_number: "11", floor: "sank", capacity: 1, zone: "Barska stolica", map_left: "25%", map_top: "88%" },
+  { table_number: "12", floor: "sank", capacity: 1, zone: "Barska stolica", map_left: "35%", map_top: "88%" },
+  { table_number: "13", floor: "sank", capacity: 1, zone: "Barska stolica", map_left: "45%", map_top: "88%" },
+  { table_number: "14", floor: "sank", capacity: 1, zone: "Barska stolica", map_left: "55%", map_top: "88%" },
   { table_number: "15", floor: "sprat", capacity: 4, zone: "Sprat", map_left: "68%", map_top: "84%" },
   { table_number: "16", floor: "sprat", capacity: 4, zone: "Sprat", map_left: "42%", map_top: "84%" },
   { table_number: "17", floor: "sprat", capacity: 4, zone: "Sprat", map_left: "10%", map_top: "84%" },
@@ -111,10 +111,18 @@ const reserveSelected = document.querySelector("#reserve-selected");
 const guestForm = document.querySelector("#guest-form");
 const guestEvent = document.querySelector("#guest-event");
 const toast = document.querySelector("#toast");
+const mapControls = document.querySelector(".map-controls");
 
 let events = fallbackEvents;
 let tables = fallbackTables;
 let selectedTable = null;
+const mapViews = {
+  sank: { x: 0, y: 0, scale: 1 },
+  sprat: { x: 0, y: 0, scale: 1 },
+};
+const mapPointers = new Map();
+let mapDrag = null;
+let mapPinch = null;
 
 function showToast(message, tone = "success") {
   toast.dataset.tone = tone;
@@ -230,17 +238,27 @@ function isBarSeat(table) {
   return table.zone === "Barska stolica";
 }
 
+function tableStatus(table) {
+  const rawStatus = String(table.availability_status || table.availability || table.status || "").toLowerCase();
+  if (table.is_reserved || ["reserved", "busy", "booked", "confirmed"].includes(rawStatus)) return "reserved";
+  return "available";
+}
+
 function tableMarkup(table) {
   const placeLabel = guestCapacityLabel(table);
+  const status = tableStatus(table);
+  const statusLabel = status === "reserved" ? "Zauzeto" : "Slobodno";
   return `
         <button
-          class="table ${isBarSeat(table) ? "bar-seat" : "venue-table"} ${table.is_vip ? "vip" : ""}"
+          class="table ${isBarSeat(table) ? "bar-seat" : "venue-table"} ${table.is_vip ? "vip" : ""} ${status}"
           type="button"
-          style="left:${escapeHtml(table.map_left || "10%")} ;top:${escapeHtml(table.map_top || "10%")}"
+          style="left:${escapeHtml(table.map_left || "10%")};top:${escapeHtml(table.map_top || "10%") }"
           data-table="${escapeHtml(table.table_number)}"
+          data-status="${escapeHtml(status)}"
           aria-label="${escapeHtml(tableName(table))}, ${escapeHtml(guestCapacityLabel(table))}, ${escapeHtml(table.zone)}${
             table.is_vip ? ", VIP" : ""
-          }"
+          }, ${escapeHtml(statusLabel)}"
+          ${status === "reserved" ? "disabled" : ""}
         >
           <strong>${escapeHtml(table.table_number)}</strong>
           <span>${table.is_vip ? "VIP" : isBarSeat(table) ? "Stolica" : placeLabel}</span>
@@ -261,6 +279,40 @@ function showFloor(floor) {
     tab.setAttribute("aria-selected", String(active));
   });
   floorPlans.forEach((plan) => plan.classList.toggle("active", plan.dataset.floorPlan === floor));
+  applyMapView(floor);
+}
+
+function activeFloor() {
+  return document.querySelector(".venue-plan.active")?.dataset.floorPlan || "sank";
+}
+
+function activePlan() {
+  return document.querySelector(".venue-plan.active");
+}
+
+function clampMapScale(scale) {
+  return Math.min(1.72, Math.max(0.92, scale));
+}
+
+function applyMapView(floor = activeFloor()) {
+  const plan = document.querySelector(`[data-floor-plan="${floor}"]`);
+  const view = mapViews[floor];
+  if (!plan || !view) return;
+  plan.style.setProperty("--map-x", `${view.x}px`);
+  plan.style.setProperty("--map-y", `${view.y}px`);
+  plan.style.setProperty("--map-scale", String(view.scale));
+  plan.classList.toggle("zoomed", view.scale > 1.02 || Math.abs(view.x) > 2 || Math.abs(view.y) > 2);
+}
+
+function zoomMap(delta) {
+  const floor = activeFloor();
+  mapViews[floor].scale = clampMapScale(mapViews[floor].scale + delta);
+  applyMapView(floor);
+}
+
+function resetMapView(floor = activeFloor()) {
+  mapViews[floor] = { x: 0, y: 0, scale: 1 };
+  applyMapView(floor);
 }
 
 function renderStaticSections() {
@@ -337,6 +389,9 @@ async function loadSupabaseData() {
       tables = fallbackTables.map((layoutTable) => ({
         ...layoutTable,
         ...databaseTablesByNumber.get(tableKey(layoutTable.table_number)),
+        ...(layoutTable.floor === "sank" && Number(layoutTable.table_number) <= 14
+          ? { zone: "Barska stolica", capacity: 1 }
+          : {}),
         floor: layoutTable.floor,
         map_left: layoutTable.map_left,
         map_top: layoutTable.map_top,
@@ -446,6 +501,67 @@ floorStage.addEventListener("click", (event) => {
   if (window.matchMedia("(max-width: 720px)").matches) {
     openReservationForSelected();
   }
+});
+
+mapControls.addEventListener("click", (event) => {
+  const control = event.target.closest("[data-map-action]");
+  if (!control) return;
+  if (control.dataset.mapAction === "zoom-in") zoomMap(0.16);
+  if (control.dataset.mapAction === "zoom-out") zoomMap(-0.16);
+  if (control.dataset.mapAction === "reset") resetMapView();
+});
+
+function pointerDistance(first, second) {
+  return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY);
+}
+
+floorPlans.forEach((plan) => {
+  plan.addEventListener("pointerdown", (event) => {
+    if (event.target.closest(".table")) return;
+    plan.setPointerCapture(event.pointerId);
+    mapPointers.set(event.pointerId, event);
+    const floor = plan.dataset.floorPlan;
+    const view = mapViews[floor];
+
+    if (mapPointers.size === 1) {
+      mapDrag = { floor, pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, x: view.x, y: view.y };
+    }
+
+    if (mapPointers.size === 2) {
+      const [first, second] = [...mapPointers.values()];
+      mapPinch = { floor, distance: pointerDistance(first, second), scale: view.scale };
+      mapDrag = null;
+    }
+  });
+
+  plan.addEventListener("pointermove", (event) => {
+    if (!mapPointers.has(event.pointerId)) return;
+    mapPointers.set(event.pointerId, event);
+    const floor = plan.dataset.floorPlan;
+    const view = mapViews[floor];
+
+    if (mapPointers.size === 2 && mapPinch?.floor === floor) {
+      const [first, second] = [...mapPointers.values()];
+      view.scale = clampMapScale(mapPinch.scale * (pointerDistance(first, second) / mapPinch.distance));
+      applyMapView(floor);
+      return;
+    }
+
+    if (mapDrag?.pointerId === event.pointerId && mapDrag.floor === floor) {
+      view.x = mapDrag.x + event.clientX - mapDrag.startX;
+      view.y = mapDrag.y + event.clientY - mapDrag.startY;
+      applyMapView(floor);
+    }
+  });
+
+  const stopMapPointer = (event) => {
+    mapPointers.delete(event.pointerId);
+    if (mapDrag?.pointerId === event.pointerId) mapDrag = null;
+    if (mapPointers.size < 2) mapPinch = null;
+  };
+
+  plan.addEventListener("pointerup", stopMapPointer);
+  plan.addEventListener("pointercancel", stopMapPointer);
 });
 
 reserveSelected.addEventListener("click", () => {
